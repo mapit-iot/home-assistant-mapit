@@ -1,0 +1,72 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Esta conta Mapit já está configurada.",
+      "cannot_connect": "Não foi possível ler a conta Mapit. Tentar novamente mais tarde.",
+      "location_required": "O Home Assistant precisa da localização dos veículos. Tentar novamente e, quando a Mapit pedir, assinalar «Permitir também a localização do veículo e o último estado comunicado pelo dispositivo».",
+      "missing_configuration": "O início de sessão na Mapit não está disponível. Reiniciar o Home Assistant e tentar novamente.",
+      "reauth_successful": "Sessão iniciada novamente na Mapit.",
+      "wrong_account": "A sessão foi iniciada com outra conta Mapit. Iniciar sessão com a conta configurada em primeiro lugar."
+    },
+    "create_entry": {
+      "default": "Sessão iniciada na Mapit."
+    },
+    "step": {
+      "pick_implementation": {
+        "title": "Escolher como iniciar sessão"
+      },
+      "reauth_confirm": {
+        "title": "Iniciar sessão novamente na Mapit",
+        "description": "A ligação à Mapit expirou, foi removida ou já não inclui a localização dos veículos. Iniciar sessão novamente com a conta Mapit e, quando a Mapit pedir, assinalar «Permitir também a localização do veículo e o último estado comunicado pelo dispositivo»."
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery": {
+        "name": "Bateria Mapit"
+      },
+      "status": {
+        "name": "Estado",
+        "state": {
+          "at_rest": "Em repouso",
+          "buzz": "Vibração",
+          "moving": "Em trajeto",
+          "no_comms": "Sem conexão",
+          "hibernation": "Desligado",
+          "hibernation_requested": "Desligado",
+          "tilt_detected": "Moto caída"
+        }
+      },
+      "last_location": {
+        "name": "Última localização"
+      },
+      "last_communication": {
+        "name": "Última comunicação"
+      },
+      "voltage": {
+        "name": "Tensão do veículo"
+      },
+      "odometer": {
+        "name": "Conta-quilómetros"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "A Mapit não aceitou a ligação. Iniciar sessão novamente."
+    },
+    "rate_limited": {
+      "message": "A Mapit pediu para abrandar. A próxima atualização espera um pouco mais."
+    },
+    "update_failed": {
+      "message": "Não foi possível contactar a Mapit. O Home Assistant tenta novamente dentro de um minuto."
+    },
+    "implementation_unavailable": {
+      "message": "O início de sessão na Mapit ainda não está disponível."
+    },
+    "location_required": {
+      "message": "A Mapit já não partilha a localização dos veículos com o Home Assistant. Iniciar sessão novamente e permitir a localização dos veículos."
+    }
+  }
+}

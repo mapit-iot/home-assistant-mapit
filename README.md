@@ -25,7 +25,7 @@ One device per vehicle on your Mapit account, with:
 | Entity | What it shows |
 | --- | --- |
 | Tracker (the vehicle's name) | The last position the tracker reported |
-| Status | Parked, moving, movement detected, no communication, going to hibernate or hibernating |
+| Status | At rest, vibration, in transit, offline, off or fall detection, as in the Mapit app (see below) |
 | Last location | When that position was reported |
 | Last communication | When the tracker last reported anything (diagnostic) |
 | Mapit battery | The tracker's own battery, not the vehicle's, as last reported (diagnostic) |
@@ -37,6 +37,18 @@ Last location and Last communication times before acting on a position. A vehicl
 0 while the vehicle is stopped is normal: it is not a fault, a flat battery or a disconnection.
 Some trackers report a fixed 12.0 V only to say they are connected to the vehicle's power, so the
 voltage sensor is off by default; turn it on in the entity settings if you want it.
+
+The status values, with the same labels as the Mapit app:
+
+- `at_rest` **At rest**: the vehicle is parked.
+- `buzz` **Vibration**: the tracker felt vibration while parked.
+- `moving` **In transit**: the vehicle is moving.
+- `no_comms` **Offline**: the tracker is not communicating.
+- `hibernation` and `hibernation_requested` **Off**: hibernating or about to, to save battery.
+- `tilt_detected` **Fall detection**: the vehicle may have fallen.
+
+A vehicle that never reported a position or status, or reports one not listed here, shows
+"unknown". The labels are translated into Spanish and Portuguese.
 
 Vehicles whose subscription is cancelled, that are being transferred, or that have no tracker
 show no position, as in the Mapit app.
@@ -51,10 +63,14 @@ show no position, as in the Mapit app.
 ## Install
 
 With [HACS](https://hacs.xyz): add `https://github.com/mapit-iot/home-assistant-mapit` as a
-custom repository (type Integration), install **Mapit** and restart Home Assistant.
+custom repository (type Integration), install **Mapit** and restart Home Assistant. HACS installs
+the [latest release](https://github.com/mapit-iot/home-assistant-mapit/releases/latest).
 
-By hand: copy `custom_components/mapit` into your Home Assistant `config/custom_components`
-folder and restart Home Assistant.
+By hand: download the source of the
+[latest release](https://github.com/mapit-iot/home-assistant-mapit/releases/latest), not `main`,
+copy its `custom_components/mapit` into your Home Assistant `config/custom_components` folder and
+restart Home Assistant. Home Assistant downloads `aiomapit` from PyPI on that first restart, so it
+needs internet access.
 
 ## Set up
 
@@ -63,7 +79,11 @@ folder and restart Home Assistant.
 2. Sign in with your Mapit account. Mapit asks for your password even if you are signed in,
    because the location of your vehicles is shared. Tick **Also allow vehicle location and last
    reported device status**: Home Assistant cannot show your vehicles without it.
-3. You are sent back to Home Assistant and your vehicles appear.
+3. The first time, `my.home-assistant.io` asks for your Home Assistant URL (it suggests
+   `http://homeassistant.local:8123`). Enter the address you open Home Assistant at and press
+   **Link account**. The address is stored only in that browser.
+4. Home Assistant opens a **Name and assign** dialog that lists every vehicle, where you can choose
+   an area for each. **Skip and finish** is fine too. Your vehicles appear.
 
 Home Assistant stays connected while it keeps updating, up to a year. When the connection ends
 (after a year, after 30 days without Home Assistant running, or if you remove it), Home

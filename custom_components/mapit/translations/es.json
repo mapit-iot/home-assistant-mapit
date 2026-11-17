@@ -29,12 +29,13 @@
       "status": {
         "name": "Estado",
         "state": {
-          "at_rest": "Aparcado",
-          "moving": "En movimiento",
-          "buzz": "Movimiento detectado",
-          "no_comms": "Sin comunicación",
-          "hibernation": "Hibernando",
-          "hibernation_requested": "Entrando en hibernación"
+          "at_rest": "En reposo",
+          "buzz": "Vibración",
+          "moving": "En trayecto",
+          "no_comms": "Sin conexión",
+          "hibernation": "Apagado",
+          "hibernation_requested": "Apagado",
+          "tilt_detected": "Moto caída"
         }
       },
       "last_location": {
