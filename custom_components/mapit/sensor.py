@@ -95,7 +95,8 @@ SENSORS = (
         device_class=SensorDeviceClass.DISTANCE,
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         suggested_display_precision=0,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        # Editable km can decrease; TOTAL_INCREASING would read that as a meter reset.
+        state_class=SensorStateClass.TOTAL,
         vehicle_fn=lambda v: v.km,
     ),
 )
