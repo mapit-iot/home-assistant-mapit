@@ -29,12 +29,13 @@
       "status": {
         "name": "Status",
         "state": {
-          "at_rest": "Parked",
-          "moving": "Moving",
-          "buzz": "Movement detected",
-          "no_comms": "No communication",
-          "hibernation": "Hibernating",
-          "hibernation_requested": "Going to hibernate"
+          "at_rest": "At rest",
+          "buzz": "Vibration",
+          "moving": "In transit",
+          "no_comms": "Offline",
+          "hibernation": "Off",
+          "hibernation_requested": "Off",
+          "tilt_detected": "Fall detection"
         }
       },
       "last_location": {

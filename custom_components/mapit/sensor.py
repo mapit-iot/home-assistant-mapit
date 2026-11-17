@@ -26,7 +26,15 @@ from .entity import MapitEntity
 PARALLEL_UPDATES = 0
 
 # Device statuses Mapit reports; anything else shows as unknown.
-STATUSES = ["at_rest", "moving", "buzz", "no_comms", "hibernation", "hibernation_requested"]
+STATUSES = [
+    "at_rest",
+    "moving",
+    "buzz",
+    "no_comms",
+    "hibernation",
+    "hibernation_requested",
+    "tilt_detected",
+]
 
 type Value = str | float | datetime | None
 

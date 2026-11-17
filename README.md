@@ -25,7 +25,7 @@ One device per vehicle on your Mapit account, with:
 | Entity | What it shows |
 | --- | --- |
 | Tracker (the vehicle's name) | The last position the tracker reported |
-| Status | Parked, moving, movement detected, no communication, going to hibernate or hibernating (see below) |
+| Status | At rest, vibration, in transit, offline, off or fall detection, as in the Mapit app (see below) |
 | Last location | When that position was reported |
 | Last communication | When the tracker last reported anything (diagnostic) |
 | Mapit battery | The tracker's own battery, not the vehicle's, as last reported (diagnostic) |
@@ -38,11 +38,17 @@ Last location and Last communication times before acting on a position. A vehicl
 Some trackers report a fixed 12.0 V only to say they are connected to the vehicle's power, so the
 voltage sensor is off by default; turn it on in the entity settings if you want it.
 
-The status values: `at_rest` Parked; `moving` Moving; `buzz` Movement detected while parked;
-`no_comms` No communication, the tracker has not reported for a while; `hibernation_requested` Going
-to hibernate, the tracker was asked to hibernate and has not started yet; `hibernation` Hibernating,
-the tracker sleeps to save its battery. A vehicle that never reported a position or status, or
-reports one not listed here, shows "unknown".
+The status values, with the same labels as the Mapit app:
+
+- `at_rest` **At rest**: the vehicle is parked.
+- `buzz` **Vibration**: the tracker felt vibration while parked.
+- `moving` **In transit**: the vehicle is moving.
+- `no_comms` **Offline**: the tracker is not communicating.
+- `hibernation` and `hibernation_requested` **Off**: hibernating or about to, to save battery.
+- `tilt_detected` **Fall detection**: the vehicle may have fallen.
+
+A vehicle that never reported a position or status, or reports one not listed here, shows
+"unknown". The labels are translated into Spanish and Portuguese.
 
 Vehicles whose subscription is cancelled, that are being transferred, or that have no tracker
 show no position, as in the Mapit app.
