@@ -1,0 +1,14 @@
+{
+  "domain": "mapit",
+  "name": "Mapit",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["application_credentials"],
+  "documentation": "https://github.com/mapit-iot/home-assistant-mapit",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/mapit-iot/home-assistant-mapit/issues",
+  "loggers": ["aiomapit"],
+  "requirements": ["aiomapit==0.1.0"],
+  "version": "0.1.0"
+}

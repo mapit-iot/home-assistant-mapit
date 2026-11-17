@@ -1,0 +1,71 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This Mapit account is already set up.",
+      "cannot_connect": "Could not read your Mapit account. Try again later.",
+      "location_required": "Home Assistant needs your vehicles' location. Try again and, when Mapit asks, tick “Also allow vehicle location and last reported device status”.",
+      "missing_configuration": "The Mapit sign-in is not available. Restart Home Assistant and try again.",
+      "reauth_successful": "Signed in to Mapit again.",
+      "wrong_account": "You signed in with a different Mapit account. Sign in with the account you set up first."
+    },
+    "create_entry": {
+      "default": "Signed in to Mapit."
+    },
+    "step": {
+      "pick_implementation": {
+        "title": "Pick how to sign in"
+      },
+      "reauth_confirm": {
+        "title": "Sign in to Mapit again",
+        "description": "Your Mapit connection has expired, was removed, or no longer includes your vehicles' location. Sign in again with your Mapit account and, when Mapit asks, tick “Also allow vehicle location and last reported device status”."
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery": {
+        "name": "Mapit battery"
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "at_rest": "Parked",
+          "moving": "Moving",
+          "buzz": "Movement detected",
+          "no_comms": "No communication",
+          "hibernation": "Hibernating",
+          "hibernation_requested": "Going to hibernate"
+        }
+      },
+      "last_location": {
+        "name": "Last location"
+      },
+      "last_communication": {
+        "name": "Last communication"
+      },
+      "voltage": {
+        "name": "Vehicle voltage"
+      },
+      "odometer": {
+        "name": "Odometer"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "Mapit did not accept the connection. Sign in again."
+    },
+    "rate_limited": {
+      "message": "Mapit asked to slow down. The next update waits a little longer."
+    },
+    "update_failed": {
+      "message": "Could not reach Mapit. Home Assistant tries again in a minute."
+    },
+    "implementation_unavailable": {
+      "message": "The Mapit sign-in is not available yet."
+    },
+    "location_required": {
+      "message": "Mapit no longer shares your vehicles' location with Home Assistant. Sign in again and allow vehicle location."
+    }
+  }
+}
