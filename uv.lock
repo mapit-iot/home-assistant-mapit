@@ -207,9 +207,13 @@ wheels = [
 [[package]]
 name = "aiomapit"
 version = "0.1.0"
-source = { git = "https://github.com/mapit-iot/aiomapit?rev=4f8a91abc05a133fa0d9e362b04a8536ad1ad340#4f8a91abc05a133fa0d9e362b04a8536ad1ad340" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fa/2d/f09e6c86a77a1ee460affe2a10f267fa56a92d8ce0dc0c2a56697d100b78/aiomapit-0.1.0.tar.gz", hash = "sha256:ea8d13fc98a4f16bc6ed6aaa671d727e5267c1aeab4dc9e540a1b33d829db1bc", size = 103253, upload-time = "2026-11-17T15:46:59.478Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/49/4b/0ca23c44350b1a25cb5ef8fbeec9d7b5bd8652b927751d6b6e6bc1b7bfbf/aiomapit-0.1.0-py3-none-any.whl", hash = "sha256:7a6b798eb1e4897680573ef8b77dba1025adc49df01ff97f9bd1b8856c5bb556", size = 13304, upload-time = "2026-11-17T15:46:58.173Z" },
 ]
 
 [[package]]
@@ -1239,7 +1243,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "aiomapit", git = "https://github.com/mapit-iot/aiomapit?rev=4f8a91abc05a133fa0d9e362b04a8536ad1ad340" },
+    { name = "aiomapit", specifier = "==0.1.0" },
     { name = "pytest-homeassistant-custom-component", specifier = "==0.13.375" },
     { name = "ruff", specifier = ">=0.14" },
 ]

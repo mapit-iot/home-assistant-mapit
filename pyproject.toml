@@ -15,11 +15,6 @@ dev = [
 [tool.uv]
 package = false
 
-[tool.uv.sources]
-# Dev and tests only (Home Assistant installs aiomapit==0.1.0 from PyPI, per manifest.json).
-# shortcut: until 0.1.0 is on PyPI, uv takes it from aiomapit main; drop this line once published.
-aiomapit = { git = "https://github.com/mapit-iot/aiomapit", rev = "4f8a91abc05a133fa0d9e362b04a8536ad1ad340" }
-
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
