@@ -1,7 +1,7 @@
 {
   "domain": "mapit",
   "name": "Mapit",
-  "codeowners": [],
+  "codeowners": ["@mapit-iot/maintainers"],
   "config_flow": true,
   "dependencies": ["application_credentials"],
   "documentation": "https://github.com/mapit-iot/home-assistant-mapit",
