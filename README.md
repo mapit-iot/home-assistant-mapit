@@ -1,6 +1,8 @@
-# Mapit for Home Assistant
+# Mapit for Home Assistant: the official Mapit integration
 
-The official Home Assistant integration for [Mapit](https://mapit.me) vehicle trackers. Sign in
+Made and maintained by [Mapit](https://mapit.me). Mapit lists its official and approved apps at <https://developers.mapit.me/approved-apps>. Other projects that use Mapit are not endorsed by Mapit unless they are listed there.
+
+The official Home Assistant integration for Mapit vehicle trackers. Sign in
 with your Mapit account and each of your vehicles appears in Home Assistant with its last
 reported position and status.
 
