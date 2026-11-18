@@ -97,7 +97,8 @@ automation:
 
 Find the device id in the address bar of the vehicle's device page. When you first add the
 integration, alerts sent before that are not replayed. Alerts that arrive while Home Assistant is
-off are delivered when it starts again, for up to 7 days.
+off are delivered when it starts again, unless they were sent more than 15 minutes earlier: those
+are skipped, so an automation never acts on stale news.
 
 ## Requirements
 

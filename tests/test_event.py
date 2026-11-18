@@ -66,6 +66,11 @@ async def _tick(hass: HomeAssistant, freezer: FrozenDateTimeFactory) -> None:
     await hass.async_block_till_done()
 
 
+@pytest.fixture(autouse=True)
+def _just_after_alert(freezer: FrozenDateTimeFactory) -> None:
+    freezer.move_to("2026-11-18T08:02:00+00:00")
+
+
 async def test_first_install_replays_nothing_then_fires_new_alerts(
     hass: HomeAssistant,
     freezer: FrozenDateTimeFactory,
@@ -85,7 +90,7 @@ async def test_first_install_replays_nothing_then_fires_new_alerts(
     assert hass_storage[_store_key(loaded_entry)]["data"] == {"cursor": "cur_1", "ids": []}
 
     # Same eventsCursor: no /events call.
-    _answer(mapit_api, "ec_1")
+    _answer(mapit_api, "ec_1", **{"cur_1": _page(next_cursor="cur_1")})
     await _tick(hass, freezer)
     assert _events_cursors(mapit_api) == []
 
@@ -218,3 +223,34 @@ async def test_no_alerts_permission_logs_once(
     assert caplog.text.count("does not include alerts") == 1
     assert hass.states.get("sensor.vespa_status").state == "at_rest"
     assert not hass.config_entries.flow.async_progress_by_handler(DOMAIN)
+
+
+async def test_stale_alerts_are_marked_seen_but_not_fired(
+    hass: HomeAssistant,
+    freezer: FrozenDateTimeFactory,
+    loaded_entry: MockConfigEntry,
+    mapit_api: AiohttpClientMocker,
+    hass_storage: dict[str, Any],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """After an outage only alerts notified in the last 15 minutes fire."""
+    caplog.set_level("DEBUG")
+    fired = async_capture_events(hass, ALERT_EVENT)
+    _answer(mapit_api, "ec_1", **{"": _page(next_cursor="cur_1")})
+    await _tick(hass, freezer)
+
+    old = {**ALERT, "id": "evt_old", "notifiedAt": "2026-11-18T07:48:00.000Z"}
+    edge = {**ALERT, "id": "evt_edge", "notifiedAt": "2026-11-18T07:49:30.000Z"}
+    fresh = {**ALERT, "id": "evt_fresh", "notifiedAt": "2026-11-18T08:03:00.000Z"}
+    _answer(mapit_api, "ec_2", cur_1=_page(old, edge, fresh, next_cursor="cur_2"))
+    await _tick(hass, freezer)
+
+    assert [e.data["notified_at"] for e in fired] == [
+        "2026-11-18T07:49:30+00:00",
+        "2026-11-18T08:03:00+00:00",
+    ]
+    assert "Skipped 1 Mapit alerts" in caplog.text
+    assert hass_storage[_store_key(loaded_entry)]["data"] == {
+        "cursor": "cur_2",
+        "ids": ["evt_old", "evt_edge", "evt_fresh"],
+    }

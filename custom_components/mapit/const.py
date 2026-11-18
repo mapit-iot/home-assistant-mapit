@@ -20,3 +20,6 @@ VEHICLES_INTERVAL = timedelta(hours=1)
 
 # Fired on the event bus once per Mapit alert.
 ALERT_EVENT = f"{DOMAIN}_alert"
+
+# Older alerts (after an outage) are marked seen but not fired: an automation must not act on them.
+FRESH_ALERT = timedelta(minutes=15)

@@ -22,8 +22,9 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
-from .const import ALERT_EVENT, DOMAIN, LOGGER, UPDATE_INTERVAL, VEHICLES_INTERVAL
+from .const import ALERT_EVENT, DOMAIN, FRESH_ALERT, LOGGER, UPDATE_INTERVAL, VEHICLES_INTERVAL
 
 type MapitConfigEntry = ConfigEntry[MapitCoordinator]
 
@@ -139,13 +140,20 @@ class MapitCoordinator(DataUpdateCoordinator[MapitData]):
                 LOGGER.debug("Reading Mapit alerts failed: %s", err)
             return
         new = []
+        stale = 0
         if self._alerts_cursor is not None:  # the first read ever fires nothing
+            oldest = dt_util.utcnow() - FRESH_ALERT
             for alert in alerts:
                 if alert.type is not EventType.UNKNOWN and alert.id not in self._seen:
                     self._seen.append(alert.id)
-                    new.append(alert)
+                    if alert.notified_at >= oldest:
+                        new.append(alert)
+                    else:
+                        stale += 1
+        if stale:
+            LOGGER.debug("Skipped %d Mapit alerts older than %s", stale, FRESH_ALERT)
         self._events_cursor, self._alerts_read = events_cursor, True
-        if new or cursor != self._alerts_cursor:
+        if new or stale or cursor != self._alerts_cursor:
             self._alerts_cursor = cursor
             # Saved before firing: a crash in between drops these alerts, never fires them twice.
             await self._store.async_save({"cursor": cursor, "ids": list(self._seen)})
