@@ -152,7 +152,8 @@ only then does Home Assistant read them, with one more request.
 ## Privacy
 
 Home Assistant keeps the sign-in tokens, never your password. The position and status of your
-vehicles are stored by Home Assistant like any other entity. Diagnostics downloads leave out
+vehicles, and the alerts with their geofence names, are stored by Home Assistant like any other
+entity. Diagnostics downloads leave out
 the tokens, positions, your email address and the names and plates of your vehicles.
 
 ## Help

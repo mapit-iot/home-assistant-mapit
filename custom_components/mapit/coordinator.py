@@ -100,9 +100,9 @@ class MapitCoordinator(DataUpdateCoordinator[MapitData]):
         # Not on setup: entities and automations may not be loaded yet. The next poll reads them.
         if self.data is not None:
             await self._async_alerts(page.events_cursor)
-        if self.data is not None and self.data.vehicles.keys() != self._vehicles.keys():
-            # A vehicle was added or removed: reload to add or drop its device.
-            self.hass.config_entries.async_schedule_reload(self.config_entry.entry_id)
+            if self.data.vehicles.keys() != self._vehicles.keys():
+                # A vehicle was added or removed: reload to add or drop its device.
+                self.hass.config_entries.async_schedule_reload(self.config_entry.entry_id)
         return MapitData(dict(self._vehicles), statuses)
 
     async def _async_alerts(self, events_cursor: str | None) -> None:
