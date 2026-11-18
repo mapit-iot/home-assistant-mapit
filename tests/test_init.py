@@ -20,7 +20,7 @@ from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
 from custom_components.mapit import async_remove_config_entry_device
 from custom_components.mapit.const import DOMAIN
 
-from .conftest import STATUS, STATUS_URL, VEHICLES, VEHICLES_URL
+from .conftest import EVENTS_URL, NO_EVENTS, STATUS, STATUS_URL, VEHICLES, VEHICLES_URL
 
 
 def _calls(aioclient_mock: AiohttpClientMocker, url: str) -> list[dict]:
@@ -87,13 +87,14 @@ async def test_one_status_call_and_304(
 
     mapit_api.clear_requests()
     mapit_api.get(STATUS_URL, status=HTTPStatus.NOT_MODIFIED)
+    mapit_api.get(EVENTS_URL, json=NO_EVENTS)
     await _tick(hass, freezer, 30)
     assert mapit_api.call_count == 0
     await _tick(hass, freezer, 31)
 
     (headers,) = _calls(mapit_api, STATUS_URL)
     assert headers["If-None-Match"] == 'W/"status-1"'
-    assert mapit_api.call_count == 1  # vehicles are read once an hour
+    assert not _calls(mapit_api, VEHICLES_URL)  # vehicles are read once an hour
     assert hass.states.get("sensor.vespa_status").state == "at_rest"
     assert hass.states.get("device_tracker.vespa").attributes["latitude"] == 41.39
 
@@ -116,8 +117,9 @@ async def test_rate_limited_backs_off(
 
     mapit_api.clear_requests()
     mapit_api.get(STATUS_URL, json=STATUS)
+    mapit_api.get(EVENTS_URL, json=NO_EVENTS)
     await _tick(hass, freezer, 200)
-    assert mapit_api.call_count == 1
+    assert len(_calls(mapit_api, STATUS_URL)) == 1
     assert hass.states.get("sensor.vespa_status").state == "at_rest"
 
 
@@ -168,6 +170,7 @@ async def test_new_vehicle_reloads(
     mapit_api.clear_requests()
     mapit_api.get(STATUS_URL, json={**STATUS, "vehicles": [*STATUS["vehicles"], status]})
     mapit_api.get(VEHICLES_URL, json={**VEHICLES, "vehicles": [*VEHICLES["vehicles"], new]})
+    mapit_api.get(EVENTS_URL, json=NO_EVENTS)
     await _tick(hass, freezer, 61)
     await hass.async_block_till_done(wait_background_tasks=True)
 

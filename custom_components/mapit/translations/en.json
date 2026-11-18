@@ -22,6 +22,34 @@
     }
   },
   "entity": {
+    "event": {
+      "alert": {
+        "name": "Alert",
+        "state_attributes": {
+          "event_type": {
+            "name": "Type",
+            "state": {
+              "movement_detected": "Movement detected",
+              "geofence_entered": "Geofence entry",
+              "geofence_exited": "Geofence exit",
+              "ignition_on_detected": "Ignition left on",
+              "fall_detected": "Fall detected",
+              "accident_detected": "Accident detected",
+              "accident_contacts_notified": "Emergency contacts notified"
+            }
+          },
+          "occurred_at": {
+            "name": "Occurred at"
+          },
+          "notified_at": {
+            "name": "Notified at"
+          },
+          "geofence": {
+            "name": "Geofence"
+          }
+        }
+      }
+    },
     "sensor": {
       "battery": {
         "name": "Mapit battery"

@@ -17,3 +17,6 @@ SCOPES = ("mapit:read", LOCATION_SCOPE, "offline_access")
 # Mapit allows 30 requests a minute per token and asks integrations to poll at most once a minute.
 UPDATE_INTERVAL = timedelta(seconds=60)
 VEHICLES_INTERVAL = timedelta(hours=1)
+
+# Fired on the event bus once per Mapit alert.
+ALERT_EVENT = f"{DOMAIN}_alert"

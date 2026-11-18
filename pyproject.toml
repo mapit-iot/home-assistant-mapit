@@ -7,7 +7,8 @@ license = "MIT"
 
 [dependency-groups]
 dev = [
-  "aiomapit==0.1.0",
+  # Dev pin until aiomapit 0.2.0 is on PyPI; the manifest already requires 0.2.0.
+  "aiomapit @ git+https://github.com/mapit-iot/aiomapit@events",
   "pytest-homeassistant-custom-component==0.13.375",
   "ruff>=0.14",
 ]
