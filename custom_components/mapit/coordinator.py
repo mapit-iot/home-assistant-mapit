@@ -2,7 +2,9 @@
 the Mapit app pushed when that status says there are new ones."""
 
 import time
+from collections import deque
 from dataclasses import dataclass
+from typing import Any
 
 from aiomapit import (
     EventType,
@@ -25,9 +27,12 @@ from .const import ALERT_EVENT, DOMAIN, LOGGER, UPDATE_INTERVAL, VEHICLES_INTERV
 
 type MapitConfigEntry = ConfigEntry[MapitCoordinator]
 
+# Ids of the last alerts fired, kept to skip one delivered again.
+SEEN_ALERTS = 200
 
-def cursor_store(hass: HomeAssistant, entry_id: str) -> Store[dict[str, str]]:
-    """Where the alerts cursor survives restarts."""
+
+def cursor_store(hass: HomeAssistant, entry_id: str) -> Store[dict[str, Any]]:
+    """Where the alerts cursor and the ids of the last alerts fired survive restarts."""
     return Store(hass, 1, f"{DOMAIN}.{entry_id}.alerts")
 
 
@@ -61,9 +66,12 @@ class MapitCoordinator(DataUpdateCoordinator[MapitData]):
         self._events_cursor: str | None = None  # the status's eventsCursor at the last read
         self._alerts_read = False
         self._alerts_off = False
+        self._seen: deque[str] = deque(maxlen=SEEN_ALERTS)
 
     async def _async_setup(self) -> None:
-        self._alerts_cursor = ((await self._store.async_load()) or {}).get("cursor")
+        stored = (await self._store.async_load()) or {}
+        self._alerts_cursor = stored.get("cursor")
+        self._seen.extend(stored.get("ids", ()))
 
     async def _async_update_data(self) -> MapitData:
         try:
@@ -130,25 +138,29 @@ class MapitCoordinator(DataUpdateCoordinator[MapitData]):
             else:
                 LOGGER.debug("Reading Mapit alerts failed: %s", err)
             return
-        if self._alerts_cursor is not None:
-            devices = dr.async_get(self.hass)
+        new = []
+        if self._alerts_cursor is not None:  # the first read ever fires nothing
             for alert in alerts:
-                if alert.type is EventType.UNKNOWN:
-                    continue
-                device = devices.async_get_device_by_identifier(
-                    (DOMAIN, alert.vehicle_id), self.config_entry.entry_id
-                )
-                self.hass.bus.async_fire(
-                    ALERT_EVENT,
-                    {
-                        "device_id": device.id if device else None,
-                        "type": alert.type.value,
-                        "occurred_at": alert.occurred_at.isoformat(),
-                        "notified_at": alert.notified_at.isoformat(),
-                        "geofence": alert.geofence_name,
-                    },
-                )
+                if alert.type is not EventType.UNKNOWN and alert.id not in self._seen:
+                    self._seen.append(alert.id)
+                    new.append(alert)
         self._events_cursor, self._alerts_read = events_cursor, True
-        if cursor != self._alerts_cursor:
+        if new or cursor != self._alerts_cursor:
             self._alerts_cursor = cursor
-            await self._store.async_save({"cursor": cursor})
+            # Saved before firing: a crash in between drops these alerts, never fires them twice.
+            await self._store.async_save({"cursor": cursor, "ids": list(self._seen)})
+        devices = dr.async_get(self.hass)
+        for alert in new:
+            device = devices.async_get_device_by_identifier(
+                (DOMAIN, alert.vehicle_id), self.config_entry.entry_id
+            )
+            self.hass.bus.async_fire(
+                ALERT_EVENT,
+                {
+                    "device_id": device.id if device else None,
+                    "type": alert.type.value,
+                    "occurred_at": alert.occurred_at.isoformat(),
+                    "notified_at": alert.notified_at.isoformat(),
+                    "geofence": alert.geofence_name,
+                },
+            )
