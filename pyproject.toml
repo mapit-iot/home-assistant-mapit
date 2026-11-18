@@ -1,13 +1,13 @@
 [project]
 name = "home-assistant-mapit"
-version = "0.1.1"
+version = "0.2.0"
 description = "Mapit integration for Home Assistant (development environment)"
 requires-python = ">=3.14.2"
 license = "MIT"
 
 [dependency-groups]
 dev = [
-  "aiomapit==0.1.0",
+  "aiomapit==0.2.0",
   "pytest-homeassistant-custom-component==0.13.375",
   "ruff>=0.14",
 ]

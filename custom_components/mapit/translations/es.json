@@ -22,6 +22,34 @@
     }
   },
   "entity": {
+    "event": {
+      "alert": {
+        "name": "Alerta",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tipo",
+            "state": {
+              "movement_detected": "Movimiento detectado",
+              "geofence_entered": "Entrada en zona",
+              "geofence_exited": "Salida de zona",
+              "ignition_on_detected": "Contacto encendido",
+              "fall_detected": "Caída detectada",
+              "accident_detected": "Accidente detectado",
+              "accident_contacts_notified": "Contactos de emergencia avisados"
+            }
+          },
+          "occurred_at": {
+            "name": "Hora del evento"
+          },
+          "notified_at": {
+            "name": "Hora del aviso"
+          },
+          "geofence": {
+            "name": "Zona"
+          }
+        }
+      }
+    },
     "sensor": {
       "battery": {
         "name": "Batería Mapit"

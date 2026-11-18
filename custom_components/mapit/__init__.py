@@ -17,9 +17,9 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.loader import async_get_integration
 
 from .const import CLIENT_ID, DOMAIN
-from .coordinator import MapitConfigEntry, MapitCoordinator
+from .coordinator import MapitConfigEntry, MapitCoordinator, cursor_store
 
-PLATFORMS = [Platform.DEVICE_TRACKER, Platform.SENSOR]
+PLATFORMS = [Platform.DEVICE_TRACKER, Platform.EVENT, Platform.SENSOR]
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
@@ -61,6 +61,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: MapitConfigEntry) -> boo
 async def async_unload_entry(hass: HomeAssistant, entry: MapitConfigEntry) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: MapitConfigEntry) -> None:
+    """Forget the alerts cursor."""
+    await cursor_store(hass, entry.entry_id).async_remove()
 
 
 async def async_remove_config_entry_device(

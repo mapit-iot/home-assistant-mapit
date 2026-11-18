@@ -16,6 +16,7 @@ from custom_components.mapit.const import DOMAIN, RESOURCE
 STATUS_URL = f"{RESOURCE}/status"
 VEHICLES_URL = f"{RESOURCE}/vehicles"
 ME_URL = f"{RESOURCE}/me"
+EVENTS_URL = f"{RESOURCE}/events"
 EMAIL = "rider@example.com"
 ACCOUNT_ID = "acc_rider"
 ME = {"id": ACCOUNT_ID, "name": "Rider", "email": EMAIL}
@@ -66,7 +67,9 @@ STATUS: dict[str, Any] = {
         {"vehicleId": HONDA, "state": None, "reason": "subscription_cancelled"},
     ],
     "nextCursor": None,
+    "eventsCursor": "ec_1",
 }
+NO_EVENTS: dict[str, Any] = {"events": [], "nextCursor": "cur_0", "hasMore": False}
 
 
 @pytest.fixture(autouse=True)
@@ -118,6 +121,7 @@ def config_entry(hass: HomeAssistant) -> MockConfigEntry:
 def mapit_api(aioclient_mock: AiohttpClientMocker) -> AiohttpClientMocker:
     aioclient_mock.get(STATUS_URL, json=STATUS, headers={"ETag": 'W/"status-1"'})
     aioclient_mock.get(VEHICLES_URL, json=VEHICLES, headers={"ETag": 'W/"vehicles-1"'})
+    aioclient_mock.get(EVENTS_URL, json=NO_EVENTS)
     return aioclient_mock
 
 
