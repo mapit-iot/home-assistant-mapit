@@ -135,7 +135,9 @@ class MapitCoordinator(DataUpdateCoordinator[MapitData]):
             for alert in alerts:
                 if alert.type is EventType.UNKNOWN:
                     continue
-                device = devices.async_get_device(identifiers={(DOMAIN, alert.vehicle_id)})
+                device = devices.async_get_device_by_identifier(
+                    (DOMAIN, alert.vehicle_id), self.config_entry.entry_id
+                )
                 self.hass.bus.async_fire(
                     ALERT_EVENT,
                     {

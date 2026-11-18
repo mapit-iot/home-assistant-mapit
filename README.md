@@ -31,6 +31,7 @@ One device per vehicle on your Mapit account, with:
 | Mapit battery | The tracker's own battery, not the vehicle's, as last reported (diagnostic) |
 | Vehicle voltage | The vehicle's supply seen by the tracker, in volts (diagnostic, off by default) |
 | Odometer | The mileage stored in Mapit |
+| Alert | The last alert the Mapit app sent you about the vehicle (see [Alerts](#alerts)) |
 
 Everything is **last reported, not live**. A parked tracker reports less often, so check the
 Last location and Last communication times before acting on a position. A vehicle voltage of
@@ -52,6 +53,51 @@ A vehicle that never reported a position or status, or reports one not listed he
 
 Vehicles whose subscription is cancelled, that are being transferred, or that have no tracker
 show no position, as in the Mapit app.
+
+## Alerts
+
+The alerts the Mapit app sends to your phone also reach Home Assistant, so you can build
+automations on them. Each one updates the vehicle's **Alert** entity and fires a `mapit_alert`
+event. Only the alerts you have switched on in the Mapit app arrive, with these types:
+
+- `movement_detected` **Movement detected**: the vehicle moved. This includes most ride starts,
+  not only a moved parked vehicle.
+- `geofence_entered` and `geofence_exited` **Geofence entry** and **Geofence exit**: the vehicle
+  entered or left one of your Mapit geofences (zones in the app). `geofence` is its name.
+- `ignition_on_detected` **Ignition left on**: parked with the ignition on.
+- `fall_detected` **Fall detected**.
+- `accident_detected` **Accident detected**, and `accident_contacts_notified` **Emergency contacts
+  notified**, when Mapit sent the accident SMS to your emergency contacts.
+
+Each alert has `occurred_at` (when it happened) and `notified_at` (when the Mapit app was told to
+send it). The `mapit_alert` event also has `device_id`, the vehicle's device in Home Assistant.
+
+Alerts arrive a minute or two after the event: fine for "arriving home", too slow for a theft
+alarm. They are never a replacement for the Mapit app and its emergency SMS.
+
+In the automation editor, pick the vehicle's **Alert** entity as the trigger and its **Type** as
+the condition. In YAML, the `mapit_alert` event is the simplest trigger. This one opens the garage
+when the vehicle enters the geofence called "Home":
+
+```yaml
+automation:
+  - alias: Open the garage when the Vespa gets home
+    triggers:
+      - trigger: event
+        event_type: mapit_alert
+        event_data:
+          type: geofence_entered
+          geofence: Home
+          device_id: 0123456789abcdef0123456789abcdef  # the Vespa's device id
+    actions:
+      - action: cover.open_cover
+        target:
+          entity_id: cover.garage_door
+```
+
+Find the device id in the address bar of the vehicle's device page. When you first add the
+integration, alerts sent before that are not replayed. Alerts that arrive while Home Assistant is
+off are delivered when it starts again, for up to 7 days.
 
 ## Requirements
 
@@ -100,7 +146,8 @@ connected apps at <https://login.mapit.me/connections>.
 Once a minute, Home Assistant asks Mapit for the status of all your vehicles in one request.
 When nothing has changed, Mapit answers with a short "no change". If Mapit asks Home Assistant
 to slow down, it waits as long as asked. The vehicle list (names, models, odometer) is read
-once an hour, and when a new vehicle appears.
+once an hour, and when a new vehicle appears. The status says when there are new alerts, and
+only then does Home Assistant read them, with one more request.
 
 ## Privacy
 
